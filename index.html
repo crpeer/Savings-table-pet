@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Savings Table Pet</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app" id="app">
+      <header class="panel">
+        <h1>养成存钱宠物</h1>
+        <p>仅记录目标与行为，不连接银行、不发起支付。</p>
+      </header>
+
+      <section class="panel pet-panel">
+        <div class="pet-stage" id="petStage">
+          <img id="petImage" alt="宠物角色" />
+          <div class="placeholder" id="petPlaceholder">在 assets/ 中添加角色皮套图片</div>
+        </div>
+        <div>
+          <label for="petSkinSelect">角色皮套：</label>
+          <select id="petSkinSelect"></select>
+          <p class="hint">可在 src/config.js 添加更多皮套。</p>
+        </div>
+      </section>
+
+      <section class="panel stats-panel">
+        <h2>当前存钱</h2>
+        <p class="balance" id="balanceText">¥0.00</p>
+        <div class="stats">
+          <span>饱腹：<strong id="hungerText">0</strong></span>
+          <span>饮水：<strong id="hydrationText">0</strong></span>
+          <span>心情：<strong id="moodText">0</strong></span>
+        </div>
+      </section>
+
+      <section class="panel action-panel">
+        <h2>快捷操作</h2>
+        <div class="actions" id="actionsContainer"></div>
+      </section>
+
+      <section class="panel">
+        <h2>手动记录</h2>
+        <form id="manualForm">
+          <label>
+            场景
+            <select id="manualActionType"></select>
+          </label>
+          <label>
+            金额
+            <input id="manualAmount" type="number" min="0" step="0.01" required />
+          </label>
+          <label>
+            备注
+            <input id="manualNote" type="text" maxlength="80" placeholder="可选" />
+          </label>
+          <button type="submit">记录存钱</button>
+        </form>
+      </section>
+
+      <section class="panel data-panel">
+        <h2>数据导入导出</h2>
+        <div class="data-actions">
+          <button id="exportBtn" type="button">导出 JSON</button>
+          <button id="importBtn" type="button">导入 JSON</button>
+        </div>
+        <textarea id="jsonArea" rows="8" placeholder="在这里粘贴或复制 JSON"></textarea>
+        <p class="hint">跨设备可通过修改 src/storage.js 的适配器接入你自己的同步服务。</p>
+      </section>
+
+      <section class="panel">
+        <h2>未来 OCR 入口（预留）</h2>
+        <p class="hint">OCR 解析接口在 src/input.js 中，可后续接入图片识别结果。</p>
+      </section>
+
+      <section class="panel history-panel">
+        <h2>最近记录</h2>
+        <ul id="historyList"></ul>
+      </section>
+    </main>
+
+    <script type="module" src="src/app.js"></script>
+  </body>
+</html>

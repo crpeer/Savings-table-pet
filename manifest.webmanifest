@@ -1,0 +1,10 @@
+{
+  "name": "Savings Table Pet",
+  "short_name": "PetSaver",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f5f7ff",
+  "theme_color": "#5d6bff",
+  "description": "非交易型记账养成桌宠应用",
+  "icons": []
+}

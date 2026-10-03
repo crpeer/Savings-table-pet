@@ -1,9 +1,19 @@
+function normalizeTags(tagsText = "") {
+  return tagsText
+    .split(/[，,]/)
+    .map((tag) => tag.trim())
+    .filter(Boolean)
+    .slice(0, 8);
+}
+
 export const manualInputAdapter = {
-  parse({ actionKey, amount, note }) {
+  parse({ actionKey, amount, note, category, tags }) {
     return {
       actionKey,
       amount: Number(amount),
-      note: note || "",
+      note: (note || "").trim(),
+      category: (category || "").trim(),
+      tags: normalizeTags(tags || ""),
     };
   },
 };

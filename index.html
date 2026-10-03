@@ -3,82 +3,154 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#5d6bff" />
     <title>Savings Table Pet</title>
+    <link rel="manifest" href="manifest.webmanifest" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <main class="app" id="app">
       <header class="panel">
-        <h1>养成存钱宠物</h1>
+        <h1>养成存钱宠物（桌宠窗口版）</h1>
         <p>仅记录目标与行为，不连接银行、不发起支付。</p>
       </header>
 
-      <section class="panel pet-panel">
-        <div class="pet-stage" id="petStage">
-          <img id="petImage" alt="宠物角色" />
-          <div class="placeholder" id="petPlaceholder">在 assets/ 中添加角色皮套图片</div>
-        </div>
-        <div>
-          <label for="petSkinSelect">角色皮套：</label>
-          <select id="petSkinSelect"></select>
-          <p class="hint">可在 src/config.js 添加更多皮套。</p>
-        </div>
-      </section>
+      <section class="panel console-grid">
+        <section class="panel stats-panel nested">
+          <h2>成长面板</h2>
+          <p class="balance" id="balanceText">¥0.00</p>
+          <div class="stats">
+            <span>饱腹：<strong id="hungerText">0</strong></span>
+            <span>饮水：<strong id="hydrationText">0</strong></span>
+            <span>心情：<strong id="moodText">0</strong></span>
+            <span>等级：<strong id="levelText">1</strong></span>
+            <span>经验：<strong id="expText">0/100</strong></span>
+            <span>亲密度：<strong id="affinityText">0</strong></span>
+            <span>积分：<strong id="coinsText">0</strong></span>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-bar" id="expProgress"></div>
+          </div>
+          <ul class="milestones" id="milestonesList"></ul>
+        </section>
 
-      <section class="panel stats-panel">
-        <h2>当前存钱</h2>
-        <p class="balance" id="balanceText">¥0.00</p>
-        <div class="stats">
-          <span>饱腹：<strong id="hungerText">0</strong></span>
-          <span>饮水：<strong id="hydrationText">0</strong></span>
-          <span>心情：<strong id="moodText">0</strong></span>
-        </div>
-      </section>
+        <section class="panel nested">
+          <h2>快捷操作</h2>
+          <div class="actions" id="actionsContainer"></div>
+        </section>
 
-      <section class="panel action-panel">
-        <h2>快捷操作</h2>
-        <div class="actions" id="actionsContainer"></div>
-      </section>
+        <section class="panel nested">
+          <h2>手动记账</h2>
+          <form id="manualForm">
+            <label>
+              场景
+              <select id="manualActionType"></select>
+            </label>
+            <label>
+              金额
+              <input id="manualAmount" type="number" min="0" step="0.01" required />
+            </label>
+            <label>
+              分类
+              <input id="manualCategory" type="text" maxlength="30" placeholder="如：饮食、交通" />
+            </label>
+            <label>
+              标签（逗号分隔）
+              <input id="manualTags" type="text" maxlength="80" placeholder="午餐,日常" />
+            </label>
+            <label>
+              备注
+              <input id="manualNote" type="text" maxlength="120" placeholder="可选" />
+            </label>
+            <button type="submit">记录</button>
+          </form>
+        </section>
 
-      <section class="panel">
-        <h2>手动记录</h2>
-        <form id="manualForm">
+        <section class="panel nested accounting-panel">
+          <h2>记账增强</h2>
+          <form id="budgetForm" class="inline-form">
+            <label>
+              月预算
+              <input id="budgetInput" type="number" min="0" step="0.01" />
+            </label>
+            <button type="submit">更新预算</button>
+          </form>
+          <p class="hint" id="budgetText">本月预算：-</p>
+
           <label>
-            场景
-            <select id="manualActionType"></select>
+            记录检索（备注/分类/标签）
+            <input id="searchInput" type="text" maxlength="80" placeholder="输入关键词过滤最近记录" />
           </label>
-          <label>
-            金额
-            <input id="manualAmount" type="number" min="0" step="0.01" required />
-          </label>
-          <label>
-            备注
-            <input id="manualNote" type="text" maxlength="80" placeholder="可选" />
-          </label>
-          <button type="submit">记录存钱</button>
-        </form>
-      </section>
 
-      <section class="panel data-panel">
-        <h2>数据导入导出</h2>
-        <div class="data-actions">
-          <button id="exportBtn" type="button">导出 JSON</button>
-          <button id="importBtn" type="button">导入 JSON</button>
-        </div>
-        <textarea id="jsonArea" rows="8" placeholder="在这里粘贴或复制 JSON"></textarea>
-        <p class="hint">跨设备可通过修改 src/storage.js 的适配器接入你自己的同步服务。</p>
-      </section>
+          <div class="summary-grid">
+            <article>
+              <h3>日</h3>
+              <p id="dailySummary">¥0.00 / 0 条</p>
+            </article>
+            <article>
+              <h3>周</h3>
+              <p id="weeklySummary">¥0.00 / 0 条</p>
+            </article>
+            <article>
+              <h3>月</h3>
+              <p id="monthlySummary">¥0.00 / 0 条</p>
+            </article>
+          </div>
 
-      <section class="panel">
-        <h2>未来 OCR 入口（预留）</h2>
-        <p class="hint">OCR 解析接口在 src/input.js 中，可后续接入图片识别结果。</p>
-      </section>
+          <div class="chart" id="categoryChart"></div>
+        </section>
 
-      <section class="panel history-panel">
-        <h2>最近记录</h2>
-        <ul id="historyList"></ul>
+        <section class="panel nested data-panel">
+          <h2>数据导入导出</h2>
+          <div class="data-actions">
+            <button id="exportBtn" type="button">导出 JSON</button>
+            <button id="importBtn" type="button">导入 JSON</button>
+          </div>
+          <textarea id="jsonArea" rows="8" placeholder="在这里粘贴或复制 JSON"></textarea>
+          <p class="hint">保留本地存储；可在 src/storage.js 扩展自定义跨设备同步。</p>
+        </section>
+
+        <section class="panel nested history-panel">
+          <h2>最近记录</h2>
+          <ul id="historyList"></ul>
+        </section>
       </section>
     </main>
+
+    <section class="pet-window" id="petWindow" aria-live="polite">
+      <header class="pet-window-header" id="petWindowHeader">
+        <strong>桌宠窗口</strong>
+        <div class="pet-window-actions">
+          <button id="pinBtn" type="button">置顶</button>
+          <button id="collapseBtn" type="button">收起</button>
+        </div>
+      </header>
+      <div class="pet-window-body" id="petWindowBody">
+        <div class="pet-stage" id="petStage" data-pet-state="idle">
+          <img id="petImage" alt="宠物角色" />
+          <div class="placeholder" id="petPlaceholder">在 assets/ 中添加角色图片</div>
+        </div>
+        <div class="pet-controls">
+          <label>
+            皮套
+            <select id="petSkinSelect"></select>
+          </label>
+          <label>
+            窗口尺寸
+            <select id="petSizeSelect">
+              <option value="sm">小</option>
+              <option value="md">中</option>
+              <option value="lg">大</option>
+            </select>
+          </label>
+          <label class="switch">
+            <input type="checkbox" id="soundToggle" />
+            动画音效
+          </label>
+          <p class="hint" id="petStateText">状态：待机</p>
+        </div>
+      </div>
+    </section>
 
     <script type="module" src="src/app.js"></script>
   </body>

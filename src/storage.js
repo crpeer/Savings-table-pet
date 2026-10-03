@@ -1,10 +1,18 @@
-const STORAGE_KEY = "savings-table-pet-state-v1";
+const STORAGE_KEY = "savings-table-pet-state-v2";
+
+function safeParse(jsonText) {
+  try {
+    return JSON.parse(jsonText);
+  } catch {
+    return null;
+  }
+}
 
 export const localStorageAdapter = {
   async load() {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem("savings-table-pet-state-v1");
     if (!raw) return null;
-    return JSON.parse(raw);
+    return safeParse(raw);
   },
 
   async save(state) {
@@ -17,7 +25,10 @@ export const localStorageAdapter = {
   },
 
   async importState(json) {
-    const parsed = JSON.parse(json);
+    const parsed = safeParse(json);
+    if (!parsed || typeof parsed !== "object") {
+      throw new Error("invalid json");
+    }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
     return parsed;
   },

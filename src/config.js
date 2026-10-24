@@ -6,6 +6,7 @@ export const appConfig = {
   milestoneMeta: {
     firstRecord: "完成第一笔记录",
     balance500: "累计金额达到 ¥500",
+    goalCompleted: "完成储蓄目标",
     level3: "宠物达到 3 级",
     level5: "宠物达到 5 级",
     monthly10: "本月完成 10 笔记录",

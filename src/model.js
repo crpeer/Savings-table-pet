@@ -9,6 +9,10 @@ const petEffectByAction = {
 
 const MAX_HISTORY = 240;
 const EXP_PER_LEVEL = 100;
+const DEFAULT_GOAL = {
+  name: "Nintendo Switch OLED",
+  targetAmount: 2000,
+};
 
 function toDateKey(date) {
   const d = new Date(date);
@@ -16,7 +20,8 @@ function toDateKey(date) {
 }
 
 function toMonthKey(date = new Date()) {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+  const d = new Date(date);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 }
 
 function getWeekRange(date = new Date()) {
@@ -73,6 +78,16 @@ function normalizeWindow(rawWindow = {}) {
   };
 }
 
+function normalizeGoal(rawGoal = {}) {
+  return {
+    name: String(rawGoal?.name || DEFAULT_GOAL.name),
+    targetAmount:
+      Number.isFinite(rawGoal?.targetAmount) && Number(rawGoal.targetAmount) > 0
+        ? Number(Number(rawGoal.targetAmount).toFixed(2))
+        : DEFAULT_GOAL.targetAmount,
+  };
+}
+
 function getMonthlyRecordCount(history, monthKey) {
   return history.filter((entry) => toMonthKey(entry.createdAt) === monthKey).length;
 }
@@ -81,6 +96,7 @@ function collectMilestones(state) {
   const milestoneSet = new Set(state.pet.milestones);
   if (state.history.length >= 1) milestoneSet.add("firstRecord");
   if (state.balance >= 500) milestoneSet.add("balance500");
+  if (state.balance >= state.goal.targetAmount) milestoneSet.add("goalCompleted");
   if (state.pet.level >= 3) milestoneSet.add("level3");
   if (state.pet.level >= 5) milestoneSet.add("level5");
   if (getMonthlyRecordCount(state.history, toMonthKey()) >= 10) milestoneSet.add("monthly10");
@@ -116,6 +132,7 @@ export function createInitialState(defaultSkin = "default", defaultMonthlyBudget
     accounting: {
       monthlyBudget: Number(defaultMonthlyBudget) || 0,
     },
+    goal: { ...DEFAULT_GOAL },
     window: {
       x: null,
       y: null,
@@ -152,6 +169,7 @@ export function normalizeState(rawState, defaultSkin = "default", defaultMonthly
         ? Number(rawState.accounting.monthlyBudget)
         : Number(defaultMonthlyBudget) || 0,
     },
+    goal: normalizeGoal(rawState.goal),
     window: normalizeWindow(rawState.window),
     settings: {
       soundEnabled: Boolean(rawState?.settings?.soundEnabled),
@@ -211,9 +229,10 @@ export function applySavingAction(state, payload) {
   const expGain = Math.max(4, Math.min(20, Math.round(safeAmount / 5)));
   const coinsGain = Math.max(1, Math.round(safeAmount / 4));
   const affinityGain = Math.max(1, Math.round((effect.mood + 10) / 4));
+  const beforeGoal = createGoalSummary(state);
 
   const grownPet = applyExpGrowth(state.pet, expGain);
-  const nextState = {
+  let nextState = {
     ...state,
     balance: Number((state.balance + safeAmount).toFixed(2)),
     totals: {
@@ -231,6 +250,14 @@ export function applySavingAction(state, payload) {
     history: [record, ...state.history].slice(0, MAX_HISTORY),
     lastDecayAt: new Date().toISOString(),
   };
+  const afterGoal = createGoalSummary(nextState);
+  const bonusSteps = Math.floor(afterGoal.progress / 10) - Math.floor(beforeGoal.progress / 10);
+  if (bonusSteps > 0) {
+    nextState = {
+      ...nextState,
+      pet: applyExpGrowth(nextState.pet, bonusSteps * 10),
+    };
+  }
 
   return {
     ...nextState,
@@ -343,6 +370,22 @@ export function getExpProgress(pet) {
     current: pet.exp,
     needed: EXP_PER_LEVEL,
     ratio: clamp(pet.exp / EXP_PER_LEVEL, 0, 1),
+  };
+}
+
+export function createGoalSummary(state) {
+  const current = Number(Number(state.balance || 0).toFixed(2));
+  const target = Number(Number(state?.goal?.targetAmount || DEFAULT_GOAL.targetAmount).toFixed(2));
+  const safeTarget = target > 0 ? target : DEFAULT_GOAL.targetAmount;
+  const ratio = Math.max(0, current / safeTarget);
+  const progress = Math.min(100, Math.floor(ratio * 100));
+  const remaining = Number(Math.max(0, safeTarget - current).toFixed(2));
+  return {
+    current,
+    target: safeTarget,
+    progress,
+    remaining,
+    completed: current >= safeTarget,
   };
 }
 

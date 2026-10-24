@@ -3,6 +3,7 @@ import {
   applySavingAction,
   applyTimeDecay,
   createAccountingSummary,
+  createGoalSummary,
   createInitialState,
   filterRecords,
   getExpProgress,
@@ -47,6 +48,11 @@ const refs = {
   affinityText: document.getElementById("affinityText"),
   coinsText: document.getElementById("coinsText"),
   milestonesList: document.getElementById("milestonesList"),
+  goalNameText: document.getElementById("goalNameText"),
+  goalAmountText: document.getElementById("goalAmountText"),
+  goalProgressText: document.getElementById("goalProgressText"),
+  goalProgressBar: document.getElementById("goalProgressBar"),
+  goalRemainingText: document.getElementById("goalRemainingText"),
   manualForm: document.getElementById("manualForm"),
   manualActionType: document.getElementById("manualActionType"),
   manualAmount: document.getElementById("manualAmount"),
@@ -248,6 +254,17 @@ function renderAccounting() {
   renderCategoryChart(summary.categoryTotals);
 }
 
+function renderGoal() {
+  const summary = createGoalSummary(state);
+  refs.goalNameText.textContent = state.goal.name;
+  refs.goalAmountText.textContent = `${currencyFormatter.format(summary.current)} / ${currencyFormatter.format(summary.target)}`;
+  refs.goalProgressText.textContent = `${summary.progress}%`;
+  refs.goalProgressBar.style.width = `${summary.progress}%`;
+  refs.goalRemainingText.textContent = summary.completed
+    ? "🎉 已达成目标"
+    : `剩余：${currencyFormatter.format(summary.remaining)}`;
+}
+
 function renderWindow() {
   refs.petWindow.classList.toggle("pinned", Boolean(state.window.pinned));
   refs.petWindow.classList.toggle("collapsed", Boolean(state.window.collapsed));
@@ -286,6 +303,7 @@ function renderState() {
 
   renderSkinOptions();
   renderMilestones();
+  renderGoal();
   renderAccounting();
   renderHistory();
   renderWindow();

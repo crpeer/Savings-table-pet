@@ -9,6 +9,7 @@ import {
   getExpProgress,
   inferPetState,
   normalizeState,
+  updateGoal,
   updateMonthlyBudget,
   updatePetSkin,
   updateSettings,
@@ -53,6 +54,11 @@ const refs = {
   goalProgressText: document.getElementById("goalProgressText"),
   goalProgressBar: document.getElementById("goalProgressBar"),
   goalRemainingText: document.getElementById("goalRemainingText"),
+  goalStageText: document.getElementById("goalStageText"),
+  goalForm: document.getElementById("goalForm"),
+  goalNameInput: document.getElementById("goalNameInput"),
+  goalAmountInput: document.getElementById("goalAmountInput"),
+  petHomeStageBadge: document.getElementById("petHomeStageBadge"),
   manualForm: document.getElementById("manualForm"),
   manualActionType: document.getElementById("manualActionType"),
   manualAmount: document.getElementById("manualAmount"),
@@ -78,6 +84,21 @@ let recentActionKey = "";
 let recentActionTimeout = null;
 let audioContext = null;
 let animationInterval = null;
+
+const actionLabelAliases = {
+  food: "saveMeal",
+  water: "saveDrink",
+  shopping: "saveShopping",
+  pocketMoney: "saveEntertainment",
+};
+
+const goalHomeStages = [
+  { key: "box", max: 20, label: "纸箱" },
+  { key: "nest", max: 40, label: "小窝" },
+  { key: "room", max: 60, label: "房间" },
+  { key: "suite", max: 80, label: "高级房间" },
+  { key: "dream", max: 100, label: "梦想之家" },
+];
 
 function imageWithFallback(img, src, placeholderText) {
   img.onerror = () => {
@@ -206,12 +227,17 @@ function renderHistory() {
   }
 
   filtered.slice(0, 60).forEach((item) => {
-    const action = appConfig.actions.find((entry) => entry.key === item.actionKey);
+    const actionKey = actionLabelAliases[item.actionKey] || item.actionKey;
+    const action = appConfig.actions.find((entry) => entry.key === actionKey);
     const tagsText = item.tags?.length ? ` · #${item.tags.join(" #")}` : "";
     const li = document.createElement("li");
     li.textContent = `${action?.label || item.actionKey}：${currencyFormatter.format(item.amount)} · ${item.category}${tagsText} · ${new Date(item.createdAt).toLocaleString("zh-CN")}${item.note ? ` · ${item.note}` : ""}`;
     refs.historyList.appendChild(li);
   });
+}
+
+function resolveGoalHomeStage(progress) {
+  return goalHomeStages.find((stage) => progress <= stage.max) || goalHomeStages[goalHomeStages.length - 1];
 }
 
 function renderCategoryChart(categoryTotals) {
@@ -256,6 +282,7 @@ function renderAccounting() {
 
 function renderGoal() {
   const summary = createGoalSummary(state);
+  const stage = resolveGoalHomeStage(summary.progress);
   refs.goalNameText.textContent = state.goal.name;
   refs.goalAmountText.textContent = `${currencyFormatter.format(summary.current)} / ${currencyFormatter.format(summary.target)}`;
   refs.goalProgressText.textContent = `${summary.progress}%`;
@@ -263,6 +290,11 @@ function renderGoal() {
   refs.goalRemainingText.textContent = summary.completed
     ? "🎉 已达成目标"
     : `剩余：${currencyFormatter.format(summary.remaining)}`;
+  refs.goalStageText.textContent = `宠物家园阶段：${stage.label}`;
+  refs.goalNameInput.value = state.goal.name;
+  refs.goalAmountInput.value = String(state.goal.targetAmount);
+  refs.petHomeStageBadge.textContent = stage.label;
+  refs.petStage.dataset.goalStage = stage.key;
 }
 
 function renderWindow() {
@@ -440,6 +472,20 @@ function bindEvents() {
       note: refs.manualNote.value,
       category: refs.manualCategory.value,
       tags: refs.manualTags.value,
+    });
+
+    refs.goalForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      try {
+        state = updateGoal(state, {
+          name: refs.goalNameInput.value,
+          targetAmount: refs.goalAmountInput.value,
+        });
+        renderState();
+        await persist();
+      } catch (error) {
+        alert(error.message);
+      }
     });
 
     const action = appConfig.actions.find((item) => item.key === parsed.actionKey);

@@ -77,7 +77,7 @@ python -m http.server 8080
 
 - `petSkins`: 角色皮套列表（可添加多个）
 - `backgroundImage`: 场景背景图
-- `actions[*].image`: 行为卡片图片（吃饭/喝水/消费/零花钱）
+- `actions[*].image`: 省钱行为卡片图片（如：没点外卖/没买奶茶/没买游戏/主动存款）
 
 即使图片缺失，UI 也会显示友好占位，不影响运行。
 

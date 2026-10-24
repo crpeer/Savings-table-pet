@@ -60,6 +60,10 @@ body {
   gap: 8px;
 }
 
+.goal-form {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
 .goal-name {
   margin: 0;
   font-weight: 700;
@@ -283,6 +287,38 @@ textarea { width: 100%; }
   background: linear-gradient(180deg, #fef6df, #e8f4ff);
   position: relative;
   border: 1px solid #e5e8f6;
+}
+
+.pet-home-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+  border-radius: 999px;
+  background: rgba(22, 29, 66, 0.62);
+  color: #fff;
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.pet-stage[data-goal-stage="box"] {
+  background: linear-gradient(180deg, #f7f1e3, #f3ddc1);
+}
+
+.pet-stage[data-goal-stage="nest"] {
+  background: linear-gradient(180deg, #fff8df, #f0efcf);
+}
+
+.pet-stage[data-goal-stage="room"] {
+  background: linear-gradient(180deg, #edf5ff, #dbe8ff);
+}
+
+.pet-stage[data-goal-stage="suite"] {
+  background: linear-gradient(180deg, #ede9ff, #d8d6ff);
+}
+
+.pet-stage[data-goal-stage="dream"] {
+  background: linear-gradient(180deg, #ffe8f3, #ffe3bc);
 }
 
 .pet-stage img {

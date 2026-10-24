@@ -1,6 +1,10 @@
 const clamp = (value, min = 0, max = 100) => Math.max(min, Math.min(max, value));
 
 const petEffectByAction = {
+  saveMeal: { hunger: +18, hydration: -2, mood: +6 },
+  saveDrink: { hunger: -1, hydration: +20, mood: +4 },
+  saveShopping: { hunger: -2, hydration: -2, mood: +12 },
+  saveEntertainment: { hunger: -1, hydration: -1, mood: +10 },
   food: { hunger: +18, hydration: -2, mood: +6 },
   water: { hunger: -1, hydration: +20, mood: +4 },
   shopping: { hunger: -2, hydration: -2, mood: +12 },
@@ -10,7 +14,7 @@ const petEffectByAction = {
 const MAX_HISTORY = 240;
 const EXP_PER_LEVEL = 100;
 const DEFAULT_GOAL = {
-  name: "Nintendo Switch OLED",
+  name: "我的第一个储蓄目标",
   targetAmount: 2000,
 };
 
@@ -226,8 +230,8 @@ export function applySavingAction(state, payload) {
     createdAt: new Date().toISOString(),
   };
 
-  const expGain = Math.max(4, Math.min(20, Math.round(safeAmount / 5)));
-  const coinsGain = Math.max(1, Math.round(safeAmount / 4));
+  const expGain = Math.max(1, Math.floor(Math.sqrt(safeAmount)));
+  const coinsGain = Math.max(1, Math.floor(Math.sqrt(safeAmount)));
   const affinityGain = Math.max(1, Math.round((effect.mood + 10) / 4));
   const beforeGoal = createGoalSummary(state);
 
@@ -283,6 +287,22 @@ export function updateMonthlyBudget(state, amount) {
     accounting: {
       ...state.accounting,
       monthlyBudget: Number(budget.toFixed(2)),
+    },
+  };
+}
+
+export function updateGoal(state, patch) {
+  const nextName = String(patch?.name ?? state.goal.name).trim();
+  const targetRaw = Number(patch?.targetAmount);
+  if (!Number.isFinite(targetRaw) || targetRaw <= 0) {
+    throw new Error("目标金额必须大于 0");
+  }
+
+  return {
+    ...state,
+    goal: {
+      name: nextName || "未设置目标",
+      targetAmount: Number(targetRaw.toFixed(2)),
     },
   };
 }

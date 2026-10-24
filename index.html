@@ -43,6 +43,18 @@
           </div>
           <p class="hint" id="goalProgressText">0%</p>
           <p class="hint" id="goalRemainingText">剩余：¥0.00</p>
+          <p class="hint" id="goalStageText">宠物家园阶段：纸箱</p>
+          <form id="goalForm" class="goal-form">
+            <label>
+              目标名称
+              <input id="goalNameInput" type="text" maxlength="40" required />
+            </label>
+            <label>
+              目标金额
+              <input id="goalAmountInput" type="number" min="0.01" step="0.01" required />
+            </label>
+            <button type="submit">更新目标</button>
+          </form>
         </section>
 
         <section class="panel nested">
@@ -51,7 +63,7 @@
         </section>
 
         <section class="panel nested">
-          <h2>手动记账</h2>
+          <h2>手动记录储蓄</h2>
           <form id="manualForm">
             <label>
               场景
@@ -78,7 +90,7 @@
         </section>
 
         <section class="panel nested accounting-panel">
-          <h2>记账增强</h2>
+          <h2>储蓄统计</h2>
           <form id="budgetForm" class="inline-form">
             <label>
               月预算
@@ -122,7 +134,7 @@
         </section>
 
         <section class="panel nested history-panel">
-          <h2>最近记录</h2>
+          <h2>最近储蓄记录</h2>
           <ul id="historyList"></ul>
         </section>
       </section>
@@ -138,6 +150,7 @@
       </header>
       <div class="pet-window-body" id="petWindowBody">
         <div class="pet-stage" id="petStage" data-pet-state="idle">
+          <div class="pet-home-badge" id="petHomeStageBadge">纸箱</div>
           <img id="petImage" alt="宠物角色" />
           <div class="placeholder" id="petPlaceholder">在 assets/ 中添加角色图片</div>
         </div>

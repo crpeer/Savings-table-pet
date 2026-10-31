@@ -79,6 +79,13 @@ body {
   background: var(--bg);
 }
 
+.appbar-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
 .appbar-title h1 {
   margin: 0;
   font-size: 20px;
@@ -125,10 +132,26 @@ body {
   color: var(--on-surface-variant);
 }
 
-.pet-zone {
-  display: grid;
-  gap: 10px;
-  justify-items: center;
+.companion {
+  width: 42px;
+  height: 42px;
+  flex: none;
+  cursor: pointer;
+}
+
+.companion.size-sm {
+  width: 34px;
+  height: 34px;
+}
+
+.companion.size-md {
+  width: 42px;
+  height: 42px;
+}
+
+.companion.size-lg {
+  width: 50px;
+  height: 50px;
 }
 
 .pet-window-header {
@@ -136,34 +159,18 @@ body {
 }
 
 .pet-window-body {
-  display: grid;
-  gap: 10px;
-  justify-items: center;
+  display: block;
   width: 100%;
+  height: 100%;
 }
 
 .pet-stage {
   width: 100%;
-  max-width: 200px;
-  aspect-ratio: 1 / 1;
-  border-radius: 24px;
+  height: 100%;
+  border-radius: 50%;
   overflow: hidden;
   background: var(--surface);
   position: relative;
-}
-
-.pet-window.size-md .pet-stage,
-.pet-window.size-lg .pet-stage {
-  max-width: 230px;
-}
-
-.pet-home-badge {
-  position: absolute;
-  top: 12px;
-  left: 14px;
-  z-index: 2;
-  font-size: 12px;
-  color: var(--on-surface-variant);
 }
 
 .pet-stage img {
@@ -179,9 +186,9 @@ body {
   display: grid;
   place-items: center;
   text-align: center;
-  padding: 16px;
+  padding: 4px;
   color: var(--on-surface-variant);
-  font-size: 13px;
+  font-size: 20px;
 }
 
 .pet-stage[data-pet-state="idle"] img {
@@ -199,12 +206,6 @@ body {
 .pet-stage[data-pet-state="mood"] img {
   animation: petMood 1.2s ease-in-out infinite alternate;
   filter: saturate(1.15);
-}
-
-.pet-state {
-  margin: 0;
-  font-size: 13px;
-  color: var(--on-surface-variant);
 }
 
 .goal-zone {

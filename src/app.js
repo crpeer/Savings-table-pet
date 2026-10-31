@@ -93,11 +93,11 @@ const actionLabelAliases = {
 };
 
 const goalHomeStages = [
-  { key: "box", max: 20, label: "纸箱" },
-  { key: "nest", max: 40, label: "小窝" },
-  { key: "room", max: 60, label: "房间" },
-  { key: "suite", max: 80, label: "高级房间" },
-  { key: "dream", max: 100, label: "梦想之家" },
+  { key: "box", max: 20, label: "初识" },
+  { key: "nest", max: 40, label: "熟络" },
+  { key: "room", max: 60, label: "亲近" },
+  { key: "suite", max: 80, label: "信赖" },
+  { key: "dream", max: 100, label: "羁绊" },
 ];
 
 function imageWithFallback(img, src, placeholderText) {
@@ -114,10 +114,10 @@ function imageWithFallback(img, src, placeholderText) {
 }
 
 function labelForPetState(petState) {
-  if (petState === "walk") return "巡逻";
+  if (petState === "walk") return "低落";
   if (petState === "interact") return "互动";
-  if (petState === "mood") return "高兴";
-  return "待机";
+  if (petState === "mood") return "开心";
+  return "陪伴中";
 }
 
 function setPetStateVisual(petState) {
@@ -311,7 +311,7 @@ function renderGoal() {
   refs.goalRemainingText.textContent = summary.completed
     ? "🎉 已达成目标"
     : `剩余：${currencyFormatter.format(summary.remaining)}`;
-  refs.goalStageText.textContent = `宠物家园阶段：${stage.label}`;
+  refs.goalStageText.textContent = `陪伴阶段：${stage.label}`;
   refs.goalNameInput.value = state.goal.name;
   refs.goalAmountInput.value = String(state.goal.targetAmount);
   refs.petHomeStageBadge.textContent = stage.label;
@@ -340,9 +340,9 @@ function renderWindow() {
 
 function renderState() {
   refs.balanceText.textContent = currencyFormatter.format(state.balance);
-  refs.hungerText.textContent = String(state.pet.hunger);
-  refs.hydrationText.textContent = String(state.pet.hydration);
-  refs.moodText.textContent = String(state.pet.mood);
+  if (refs.hungerText) refs.hungerText.textContent = String(state.pet.hunger);
+  if (refs.hydrationText) refs.hydrationText.textContent = String(state.pet.hydration);
+  if (refs.moodText) refs.moodText.textContent = String(state.pet.mood);
   refs.levelText.textContent = String(state.pet.level);
   refs.affinityText.textContent = String(state.pet.affinity);
   refs.coinsText.textContent = String(state.pet.coins);
@@ -352,7 +352,7 @@ function renderState() {
   refs.expProgress.style.width = `${Math.round(expProgress.ratio * 100)}%`;
 
   const skin = appConfig.petSkins[state.petSkin] || appConfig.petSkins.default;
-  imageWithFallback(refs.petImage, skin.image, "角色皮套图片未设置");
+  imageWithFallback(refs.petImage, skin.image, "🐾");
 
   renderSkinOptions();
   renderMilestones();
@@ -471,6 +471,11 @@ function bindTabNav() {
 
 function bindEvents() {
   bindTabNav();
+
+  refs.petStage.addEventListener("click", () => {
+    const moreTab = document.querySelector('.tab-btn[data-tab="more"]');
+    if (moreTab) moreTab.click();
+  });
 
   refs.petSkinSelect.addEventListener("change", async (event) => {
     state = updatePetSkin(state, event.target.value);

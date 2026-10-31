@@ -22,48 +22,50 @@
 
       <main class="views">
         <section class="view is-active" data-view="home">
-          <section class="companion-zone" id="petWindow">
-            <header class="pet-window-header" id="petWindowHeader" hidden>
-              <div class="pet-window-actions">
-                <button id="pinBtn" type="button">置顶</button>
-                <button id="collapseBtn" type="button">收起</button>
+          <section class="hero">
+            <section class="companion-zone" id="petWindow">
+              <header class="pet-window-header" id="petWindowHeader" hidden>
+                <div class="pet-window-actions">
+                  <button id="pinBtn" type="button">置顶</button>
+                  <button id="collapseBtn" type="button">收起</button>
+                </div>
+              </header>
+              <div class="pet-window-body" id="petWindowBody">
+                <div class="pet-stage" id="petStage" data-pet-state="idle">
+                  <img id="petImage" alt="陪伴角色" />
+                  <div class="placeholder" id="petPlaceholder">🎀</div>
+                </div>
+                <p class="companion-dialogue" id="petStateText">今天也要一起存钱哦～</p>
               </div>
-            </header>
-            <div class="pet-window-body" id="petWindowBody">
-              <div class="pet-stage" id="petStage" data-pet-state="idle">
-                <img id="petImage" alt="陪伴角色" />
-                <div class="placeholder" id="petPlaceholder">🎀</div>
-              </div>
-              <p class="companion-dialogue" id="petStateText">今天也要一起存钱哦～</p>
-            </div>
-          </section>
+            </section>
 
-          <section class="goal-zone">
-            <p class="zone-label">当前目标</p>
-            <p class="goal-name" id="goalNameText">-</p>
-            <p class="goal-amount" id="goalAmountText">¥0.00 / ¥0.00</p>
-            <div class="progress-wrap">
-              <div class="progress-bar" id="goalProgressBar"></div>
-            </div>
-            <div class="goal-meta">
-              <span id="goalProgressText">0%</span>
-              <span id="goalRemainingText">剩余：¥0.00</span>
-            </div>
-            <details class="fold">
-              <summary>编辑目标</summary>
-              <form id="goalForm" class="stack-form">
-                <label>
-                  目标名称
-                  <input id="goalNameInput" type="text" maxlength="40" required />
-                </label>
-                <label>
-                  目标金额
-                  <input id="goalAmountInput" type="number" min="0.01" step="0.01" required />
-                </label>
-                <button type="submit">更新目标</button>
-              </form>
-              <p class="hint" id="goalStageText">陪伴阶段：初识</p>
-            </details>
+            <section class="goal-zone">
+              <p class="zone-label">当前目标</p>
+              <p class="goal-name" id="goalNameText">-</p>
+              <p class="goal-amount" id="goalAmountText">¥0.00 / ¥0.00</p>
+              <div class="progress-wrap">
+                <div class="progress-bar" id="goalProgressBar"></div>
+              </div>
+              <div class="goal-meta">
+                <span id="goalProgressText">0%</span>
+                <span id="goalRemainingText">剩余：¥0.00</span>
+              </div>
+              <details class="fold">
+                <summary>编辑目标</summary>
+                <form id="goalForm" class="stack-form">
+                  <label>
+                    目标名称
+                    <input id="goalNameInput" type="text" maxlength="40" required />
+                  </label>
+                  <label>
+                    目标金额
+                    <input id="goalAmountInput" type="number" min="0.01" step="0.01" required />
+                  </label>
+                  <button type="submit">更新目标</button>
+                </form>
+                <p class="hint" id="goalStageText">陪伴阶段：初识</p>
+              </details>
+            </section>
           </section>
 
           <section class="quick-zone">
@@ -177,7 +179,7 @@
           <p class="zone-label">数据</p>
           <div class="data-actions">
             <button id="exportBtn" type="button">导出</button>
-            <button id="importBtn" type="button">导入</button>
+            <button id="importBtn" type="button" class="btn-tonal">导入</button>
           </div>
           <textarea id="jsonArea" rows="6" placeholder="在这里粘贴或复制 JSON"></textarea>
         </section>

@@ -172,6 +172,9 @@ function renderActions() {
   appConfig.actions.forEach((action) => {
     const card = document.createElement("article");
     card.className = "action-card";
+    card.tabIndex = 0;
+    card.setAttribute("role", "button");
+    card.setAttribute("aria-label", `记录${action.label}`);
 
     const thumb = document.createElement("div");
     thumb.className = "action-thumb";
@@ -186,13 +189,13 @@ function renderActions() {
     title.textContent = action.label;
 
     const amount = document.createElement("span");
-    amount.className = "hint";
-    amount.textContent = `默认 +${currencyFormatter.format(action.defaultAmount)} · ${action.defaultCategory}`;
+    amount.className = "action-amount";
+    amount.textContent = `+${currencyFormatter.format(action.defaultAmount)}`;
 
-    const button = document.createElement("button");
-    button.type = "button";
-    button.textContent = `记录${action.label}`;
-    button.addEventListener("click", () => {
+    thumb.append(img);
+    card.append(thumb, title, amount);
+
+    const record = () => {
       saveRecord({
         actionKey: action.key,
         amount: action.defaultAmount,
@@ -200,10 +203,15 @@ function renderActions() {
         category: action.defaultCategory,
         tags: action.defaultTags || [],
       });
+    };
+    card.addEventListener("click", record);
+    card.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        record();
+      }
     });
 
-    thumb.append(img);
-    card.append(thumb, title, amount, button);
     refs.actionsContainer.appendChild(card);
 
     const option = document.createElement("option");

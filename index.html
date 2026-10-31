@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#6366f1" />
+    <meta name="theme-color" content="#faf9fc" />
     <title>Savings Table Pet</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="stylesheet" href="style.css" />
@@ -12,11 +12,7 @@
     <div class="shell" id="app">
       <header class="appbar">
         <div class="appbar-title">
-          <span class="brand-mark">🐾</span>
-          <div>
-            <h1>养成储蓄宠物</h1>
-            <p>目标优先 · 宠物陪伴 · 快速储蓄</p>
-          </div>
+          <h1>储蓄宠物</h1>
         </div>
         <div class="appbar-balance">
           <span>当前储蓄</span>
@@ -26,10 +22,25 @@
 
       <main class="views">
         <section class="view is-active" data-view="home">
-          <section class="card goal-card">
-            <div class="card-head">
-              <h2>🎯 储蓄目标</h2>
+          <section class="pet-zone" id="petWindow">
+            <header class="pet-window-header" id="petWindowHeader" hidden>
+              <div class="pet-window-actions">
+                <button id="pinBtn" type="button">置顶</button>
+                <button id="collapseBtn" type="button">收起</button>
+              </div>
+            </header>
+            <div class="pet-window-body" id="petWindowBody">
+              <div class="pet-stage" id="petStage" data-pet-state="idle">
+                <div class="pet-home-badge" id="petHomeStageBadge">纸箱</div>
+                <img id="petImage" alt="宠物角色" />
+                <div class="placeholder" id="petPlaceholder">在 assets/ 中添加角色图片</div>
+              </div>
+              <p class="pet-state" id="petStateText">状态：待机</p>
             </div>
+          </section>
+
+          <section class="goal-zone">
+            <p class="zone-label">当前目标</p>
             <p class="goal-name" id="goalNameText">-</p>
             <p class="goal-amount" id="goalAmountText">¥0.00 / ¥0.00</p>
             <div class="progress-wrap">
@@ -39,8 +50,6 @@
               <span id="goalProgressText">0%</span>
               <span id="goalRemainingText">剩余：¥0.00</span>
             </div>
-            <p class="hint" id="goalStageText">宠物家园阶段：纸箱</p>
-
             <details class="fold">
               <summary>编辑目标</summary>
               <form id="goalForm" class="stack-form">
@@ -54,179 +63,126 @@
                 </label>
                 <button type="submit">更新目标</button>
               </form>
+              <p class="hint" id="goalStageText">宠物家园阶段：纸箱</p>
             </details>
           </section>
 
-          <section class="card pet-card" id="petWindow">
-            <header class="pet-window-header" id="petWindowHeader">
-              <strong>🐶 宠物</strong>
-              <div class="pet-window-actions">
-                <button id="pinBtn" type="button">置顶</button>
-                <button id="collapseBtn" type="button">收起</button>
-              </div>
-            </header>
-            <div class="pet-window-body" id="petWindowBody">
-              <div class="pet-stage" id="petStage" data-pet-state="idle">
-                <div class="pet-home-badge" id="petHomeStageBadge">纸箱</div>
-                <img id="petImage" alt="宠物角色" />
-                <div class="placeholder" id="petPlaceholder">在 assets/ 中添加角色图片</div>
-              </div>
-              <p class="pet-state" id="petStateText">状态：待机</p>
-              <div class="stats">
-                <span>饱腹 <strong id="hungerText">0</strong></span>
-                <span>饮水 <strong id="hydrationText">0</strong></span>
-                <span>心情 <strong id="moodText">0</strong></span>
-              </div>
-              <div class="level-line">
-                <span>等级 <strong id="levelText">1</strong></span>
-                <div class="progress-wrap grow">
-                  <div class="progress-bar" id="expProgress"></div>
-                </div>
-                <span id="expText">0/100</span>
-              </div>
-            </div>
-          </section>
-
-          <section class="card">
-            <div class="card-head">
-              <h2>⚡ 快速储蓄</h2>
-              <span class="hint">点一下，宠物有反应</span>
-            </div>
+          <section class="quick-zone">
+            <p class="zone-label">快速储蓄</p>
             <div class="actions" id="actionsContainer"></div>
           </section>
         </section>
 
         <section class="view" data-view="records">
-          <section class="card">
-            <div class="card-head">
-              <h2>📝 记录一笔</h2>
-            </div>
-            <form id="manualForm" class="stack-form">
-              <label>
-                场景
-                <select id="manualActionType"></select>
-              </label>
-              <label>
-                金额
-                <input id="manualAmount" type="number" min="0" step="0.01" required />
-              </label>
-              <label>
-                分类
-                <input id="manualCategory" type="text" maxlength="30" placeholder="如：饮食、交通" />
-              </label>
-              <label>
-                标签（逗号分隔）
-                <input id="manualTags" type="text" maxlength="80" placeholder="午餐,日常" />
-              </label>
-              <label>
-                备注
-                <input id="manualNote" type="text" maxlength="120" placeholder="可选" />
-              </label>
-              <button type="submit">保存记录</button>
-            </form>
-          </section>
+          <p class="zone-label">记录一笔</p>
+          <form id="manualForm" class="stack-form">
+            <label>
+              场景
+              <select id="manualActionType"></select>
+            </label>
+            <label>
+              金额
+              <input id="manualAmount" type="number" min="0" step="0.01" required />
+            </label>
+            <label>
+              分类
+              <input id="manualCategory" type="text" maxlength="30" placeholder="如：饮食、交通" />
+            </label>
+            <label>
+              标签（逗号分隔）
+              <input id="manualTags" type="text" maxlength="80" placeholder="午餐,日常" />
+            </label>
+            <label>
+              备注
+              <input id="manualNote" type="text" maxlength="120" placeholder="可选" />
+            </label>
+            <button type="submit">保存记录</button>
+          </form>
 
-          <section class="card">
-            <div class="card-head">
-              <h2>🔎 历史记录</h2>
-            </div>
-            <input id="searchInput" type="text" maxlength="80" placeholder="搜索备注 / 分类 / 标签" />
-            <ul class="history-list" id="historyList"></ul>
-          </section>
+          <p class="zone-label">历史记录</p>
+          <input id="searchInput" type="text" maxlength="80" placeholder="搜索备注 / 分类 / 标签" />
+          <ul class="history-list" id="historyList"></ul>
         </section>
 
         <section class="view" data-view="stats">
-          <section class="card">
-            <div class="card-head">
-              <h2>💰 月预算</h2>
-            </div>
-            <form id="budgetForm" class="stack-form inline">
-              <label>
-                本月预算
-                <input id="budgetInput" type="number" min="0" step="0.01" />
-              </label>
-              <button type="submit">更新预算</button>
-            </form>
-            <p class="hint" id="budgetText">本月预算：-</p>
-          </section>
+          <p class="zone-label">月预算</p>
+          <form id="budgetForm" class="stack-form inline">
+            <label>
+              本月预算
+              <input id="budgetInput" type="number" min="0" step="0.01" />
+            </label>
+            <button type="submit">更新</button>
+          </form>
+          <p class="hint" id="budgetText">本月预算：-</p>
 
-          <section class="card">
-            <div class="card-head">
-              <h2>📊 摘要</h2>
-            </div>
-            <div class="summary-grid">
-              <article>
-                <h3>今日</h3>
-                <p id="dailySummary">¥0.00 / 0 条</p>
-              </article>
-              <article>
-                <h3>本周</h3>
-                <p id="weeklySummary">¥0.00 / 0 条</p>
-              </article>
-              <article>
-                <h3>本月</h3>
-                <p id="monthlySummary">¥0.00 / 0 条</p>
-              </article>
-            </div>
-          </section>
+          <p class="zone-label">摘要</p>
+          <div class="summary-grid">
+            <article>
+              <h3>今日</h3>
+              <p id="dailySummary">¥0.00</p>
+            </article>
+            <article>
+              <h3>本周</h3>
+              <p id="weeklySummary">¥0.00</p>
+            </article>
+            <article>
+              <h3>本月</h3>
+              <p id="monthlySummary">¥0.00</p>
+            </article>
+          </div>
 
-          <section class="card">
-            <div class="card-head">
-              <h2>📈 分类统计</h2>
-            </div>
-            <div class="chart" id="categoryChart"></div>
-          </section>
+          <p class="zone-label">分类统计</p>
+          <div class="chart" id="categoryChart"></div>
         </section>
 
         <section class="view" data-view="more">
-          <section class="card">
-            <div class="card-head">
-              <h2>🐾 宠物设置</h2>
-            </div>
-            <div class="stack-form">
-              <label>
-                皮肤
-                <select id="petSkinSelect"></select>
-              </label>
-              <label>
-                窗口尺寸
-                <select id="petSizeSelect">
-                  <option value="sm">小</option>
-                  <option value="md">中</option>
-                  <option value="lg">大</option>
-                </select>
-              </label>
-              <label class="switch">
-                <input type="checkbox" id="soundToggle" />
-                动画音效
-              </label>
-            </div>
-          </section>
+          <p class="zone-label">宠物设置</p>
+          <div class="stack-form">
+            <label>
+              皮肤
+              <select id="petSkinSelect"></select>
+            </label>
+            <label>
+              尺寸
+              <select id="petSizeSelect">
+                <option value="sm">小</option>
+                <option value="md">中</option>
+                <option value="lg">大</option>
+              </select>
+            </label>
+            <label class="switch">
+              <input type="checkbox" id="soundToggle" />
+              动画音效
+            </label>
+          </div>
 
-          <section class="card">
-            <div class="card-head">
-              <h2>🌟 养成详情</h2>
+          <p class="zone-label">养成详情</p>
+          <div class="stats">
+            <span>饱腹 <strong id="hungerText">0</strong></span>
+            <span>饮水 <strong id="hydrationText">0</strong></span>
+            <span>心情 <strong id="moodText">0</strong></span>
+            <span>等级 <strong id="levelText">1</strong></span>
+            <span>亲密度 <strong id="affinityText">0</strong></span>
+            <span>积分 <strong id="coinsText">0</strong></span>
+          </div>
+          <div class="level-line">
+            <span>经验</span>
+            <div class="progress-wrap grow">
+              <div class="progress-bar" id="expProgress"></div>
             </div>
-            <div class="stats">
-              <span>亲密度 <strong id="affinityText">0</strong></span>
-              <span>积分 <strong id="coinsText">0</strong></span>
-            </div>
-            <details class="fold">
-              <summary>里程碑</summary>
-              <ul class="milestones" id="milestonesList"></ul>
-            </details>
-          </section>
+            <span id="expText">0/100</span>
+          </div>
+          <details class="fold">
+            <summary>里程碑</summary>
+            <ul class="milestones" id="milestonesList"></ul>
+          </details>
 
-          <section class="card">
-            <div class="card-head">
-              <h2>💾 数据</h2>
-            </div>
-            <div class="data-actions">
-              <button id="exportBtn" type="button">导出 JSON</button>
-              <button id="importBtn" type="button">导入 JSON</button>
-            </div>
-            <textarea id="jsonArea" rows="6" placeholder="在这里粘贴或复制 JSON"></textarea>
-          </section>
+          <p class="zone-label">数据</p>
+          <div class="data-actions">
+            <button id="exportBtn" type="button">导出</button>
+            <button id="importBtn" type="button">导入</button>
+          </div>
+          <textarea id="jsonArea" rows="6" placeholder="在这里粘贴或复制 JSON"></textarea>
         </section>
       </main>
 

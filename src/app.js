@@ -113,16 +113,16 @@ function imageWithFallback(img, src, placeholderText) {
   img.src = src;
 }
 
-function labelForPetState(petState) {
-  if (petState === "walk") return "低落";
-  if (petState === "interact") return "互动";
-  if (petState === "mood") return "开心";
-  return "陪伴中";
+function dialogueForPetState(petState) {
+  if (petState === "interact") return "收到！又离目标近了一步。";
+  if (petState === "mood") return "今天状态很好，继续加油！";
+  if (petState === "walk") return "有点没精神……陪你待一会儿。";
+  return "今天也要一起存钱哦～";
 }
 
 function setPetStateVisual(petState) {
   refs.petStage.dataset.petState = petState;
-  refs.petStateText.textContent = `状态：${labelForPetState(petState)}`;
+  refs.petStateText.textContent = dialogueForPetState(petState);
 }
 
 function playInteractionSound() {
@@ -352,7 +352,7 @@ function renderState() {
   refs.expProgress.style.width = `${Math.round(expProgress.ratio * 100)}%`;
 
   const skin = appConfig.petSkins[state.petSkin] || appConfig.petSkins.default;
-  imageWithFallback(refs.petImage, skin.image, "🐾");
+  imageWithFallback(refs.petImage, skin.image, "🎀");
 
   renderSkinOptions();
   renderMilestones();
@@ -471,11 +471,6 @@ function bindTabNav() {
 
 function bindEvents() {
   bindTabNav();
-
-  refs.petStage.addEventListener("click", () => {
-    const moreTab = document.querySelector('.tab-btn[data-tab="more"]');
-    if (moreTab) moreTab.click();
-  });
 
   refs.petSkinSelect.addEventListener("change", async (event) => {
     state = updatePetSkin(state, event.target.value);

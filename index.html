@@ -12,20 +12,6 @@
     <div class="shell" id="app">
       <header class="appbar">
         <div class="appbar-title">
-          <div class="companion" id="petWindow">
-            <header class="pet-window-header" id="petWindowHeader" hidden>
-              <div class="pet-window-actions">
-                <button id="pinBtn" type="button">置顶</button>
-                <button id="collapseBtn" type="button">收起</button>
-              </div>
-            </header>
-            <div class="pet-window-body" id="petWindowBody">
-              <div class="pet-stage" id="petStage" data-pet-state="idle">
-                <img id="petImage" alt="陪伴角色" />
-                <div class="placeholder" id="petPlaceholder">🐾</div>
-              </div>
-            </div>
-          </div>
           <h1>储蓄陪伴</h1>
         </div>
         <div class="appbar-balance">
@@ -36,6 +22,22 @@
 
       <main class="views">
         <section class="view is-active" data-view="home">
+          <section class="companion-zone" id="petWindow">
+            <header class="pet-window-header" id="petWindowHeader" hidden>
+              <div class="pet-window-actions">
+                <button id="pinBtn" type="button">置顶</button>
+                <button id="collapseBtn" type="button">收起</button>
+              </div>
+            </header>
+            <div class="pet-window-body" id="petWindowBody">
+              <div class="pet-stage" id="petStage" data-pet-state="idle">
+                <img id="petImage" alt="陪伴角色" />
+                <div class="placeholder" id="petPlaceholder">🎀</div>
+              </div>
+              <p class="companion-dialogue" id="petStateText">今天也要一起存钱哦～</p>
+            </div>
+          </section>
+
           <section class="goal-zone">
             <p class="zone-label">当前目标</p>
             <p class="goal-name" id="goalNameText">-</p>
@@ -156,7 +158,6 @@
           <p class="zone-label">陪伴详情</p>
           <div class="stats">
             <span>阶段 <strong id="petHomeStageBadge">初识</strong></span>
-            <span>状态 <strong id="petStateText">待机</strong></span>
             <span>等级 <strong id="levelText">1</strong></span>
             <span>亲密度 <strong id="affinityText">0</strong></span>
             <span>积分 <strong id="coinsText">0</strong></span>

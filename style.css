@@ -132,26 +132,10 @@ body {
   color: var(--on-surface-variant);
 }
 
-.companion {
-  width: 42px;
-  height: 42px;
-  flex: none;
-  cursor: pointer;
-}
-
-.companion.size-sm {
-  width: 34px;
-  height: 34px;
-}
-
-.companion.size-md {
-  width: 42px;
-  height: 42px;
-}
-
-.companion.size-lg {
-  width: 50px;
-  height: 50px;
+.companion-zone {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
 }
 
 .pet-window-header {
@@ -159,18 +143,44 @@ body {
 }
 
 .pet-window-body {
-  display: block;
+  display: grid;
+  justify-items: center;
+  gap: 12px;
   width: 100%;
-  height: 100%;
 }
 
 .pet-stage {
   width: 100%;
-  height: 100%;
-  border-radius: 50%;
+  max-width: 240px;
+  aspect-ratio: 4 / 5;
+  border-radius: 28px;
   overflow: hidden;
   background: var(--surface);
   position: relative;
+}
+
+.companion-zone.size-sm .pet-stage {
+  max-width: 190px;
+}
+
+.companion-zone.size-md .pet-stage {
+  max-width: 220px;
+}
+
+.companion-zone.size-lg .pet-stage {
+  max-width: 260px;
+}
+
+.companion-dialogue {
+  margin: 0;
+  max-width: 280px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border-radius: 16px;
+  border-top-left-radius: 4px;
+  font-size: 14px;
+  color: var(--on-surface);
+  text-align: center;
 }
 
 .pet-stage img {
@@ -186,9 +196,9 @@ body {
   display: grid;
   place-items: center;
   text-align: center;
-  padding: 4px;
+  padding: 8px;
   color: var(--on-surface-variant);
-  font-size: 20px;
+  font-size: 44px;
 }
 
 .pet-stage[data-pet-state="idle"] img {

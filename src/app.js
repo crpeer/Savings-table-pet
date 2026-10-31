@@ -158,6 +158,13 @@ function renderSkinOptions() {
   });
 }
 
+const actionEmojis = {
+  saveMeal: "🍱",
+  saveDrink: "🧋",
+  saveShopping: "🎮",
+  saveEntertainment: "💰",
+};
+
 function renderActions() {
   refs.actionsContainer.innerHTML = "";
   refs.manualActionType.innerHTML = "";
@@ -166,9 +173,14 @@ function renderActions() {
     const card = document.createElement("article");
     card.className = "action-card";
 
+    const thumb = document.createElement("div");
+    thumb.className = "action-thumb";
+    thumb.dataset.emoji = actionEmojis[action.key] || "💰";
+
     const img = document.createElement("img");
     img.alt = `${action.label}图片`;
     img.src = action.image;
+    img.addEventListener("load", () => thumb.classList.add("has-image"));
 
     const title = document.createElement("strong");
     title.textContent = action.label;
@@ -190,7 +202,8 @@ function renderActions() {
       });
     });
 
-    card.append(img, title, amount, button);
+    thumb.append(img);
+    card.append(thumb, title, amount, button);
     refs.actionsContainer.appendChild(card);
 
     const option = document.createElement("option");
@@ -464,6 +477,20 @@ function bindEvents() {
     await persist();
   });
 
+  refs.goalForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    try {
+      state = updateGoal(state, {
+        name: refs.goalNameInput.value,
+        targetAmount: refs.goalAmountInput.value,
+      });
+      renderState();
+      await persist();
+    } catch (error) {
+      alert(error.message);
+    }
+  });
+
   refs.manualForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const parsed = manualInputAdapter.parse({
@@ -472,20 +499,6 @@ function bindEvents() {
       note: refs.manualNote.value,
       category: refs.manualCategory.value,
       tags: refs.manualTags.value,
-    });
-
-    refs.goalForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      try {
-        state = updateGoal(state, {
-          name: refs.goalNameInput.value,
-          targetAmount: refs.goalAmountInput.value,
-        });
-        renderState();
-        await persist();
-      } catch (error) {
-        alert(error.message);
-      }
     });
 
     const action = appConfig.actions.find((item) => item.key === parsed.actionKey);

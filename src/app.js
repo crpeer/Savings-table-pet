@@ -432,6 +432,7 @@ function bindDrag() {
 
   refs.petWindowHeader.addEventListener("pointerdown", (event) => {
     if (event.target.tagName === "BUTTON") return;
+    if (event.pointerType !== "mouse") return;
     const rect = refs.petWindow.getBoundingClientRect();
     dragData = {
       startX: rect.left,
@@ -447,7 +448,22 @@ function bindDrag() {
   });
 }
 
+function bindTabNav() {
+  const tabs = document.querySelectorAll(".tab-btn");
+  const views = document.querySelectorAll(".view");
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      tabs.forEach((item) => item.classList.toggle("is-active", item === tab));
+      views.forEach((view) => {
+        view.classList.toggle("is-active", view.dataset.view === tab.dataset.tab);
+      });
+    });
+  });
+}
+
 function bindEvents() {
+  bindTabNav();
+
   refs.petSkinSelect.addEventListener("change", async (event) => {
     state = updatePetSkin(state, event.target.value);
     renderState();

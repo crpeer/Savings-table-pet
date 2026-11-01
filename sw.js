@@ -1,4 +1,4 @@
-const CACHE_NAME = "savings-table-pet-cache-v2";
+const CACHE_NAME = "savings-table-pet-cache-v3";
 const ASSETS = [
   "./",
   "./index.html",
@@ -9,6 +9,14 @@ const ASSETS = [
   "./src/model.js",
   "./src/input.js",
   "./src/storage.js",
+  "./src/pet-rig.js",
+  "./assets/pet-xiaomo-open.png",
+  "./assets/pet-xiaomo-blink.png",
+  "./assets/icons/icon-192.png",
+  "./assets/icons/icon-512.png",
+  "./assets/icons/icon-maskable-512.png",
+  "./assets/icons/apple-touch-icon.png",
+  "./assets/icons/favicon-32.png",
 ];
 
 self.addEventListener("install", (event) => {

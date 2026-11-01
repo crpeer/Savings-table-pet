@@ -12,9 +12,13 @@ export const appConfig = {
     monthly10: "本月完成 10 笔记录",
   },
   petSkins: {
-    default: {
-      label: "默认角色",
-      image: "assets/pet-default.png",
+    xiaomo: {
+      label: "小墨",
+      image: "assets/pet-xiaomo-open.png",
+      rig: {
+        open: "assets/pet-xiaomo-open.png",
+        blink: "assets/pet-xiaomo-blink.png",
+      },
     },
   },
   actions: [

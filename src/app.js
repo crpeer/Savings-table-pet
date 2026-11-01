@@ -16,6 +16,7 @@ import {
   updateWindowPrefs,
 } from "./model.js";
 import { manualInputAdapter } from "./input.js";
+import { createPetRig } from "./pet-rig.js";
 import { localStorageAdapter } from "./storage.js";
 
 const storage = localStorageAdapter;
@@ -32,6 +33,7 @@ const refs = {
   petStage: document.getElementById("petStage"),
   petStateText: document.getElementById("petStateText"),
   petImage: document.getElementById("petImage"),
+  petCanvas: document.getElementById("petCanvas"),
   petPlaceholder: document.getElementById("petPlaceholder"),
   petSkinSelect: document.getElementById("petSkinSelect"),
   petSizeSelect: document.getElementById("petSizeSelect"),
@@ -113,6 +115,38 @@ function imageWithFallback(img, src, placeholderText) {
   img.src = src;
 }
 
+const petRig = createPetRig({
+  canvas: refs.petCanvas,
+  image: refs.petImage,
+  placeholder: refs.petPlaceholder,
+});
+
+let activeSkinKey = "";
+const failedSkins = new Set();
+
+/**
+ * 皮套切换：带 rig 帧的走 canvas 驱动（能眨眼），否则退回静态 <img>。
+ * 资源缺失时保持原有的 🎀 占位，不会白屏。
+ */
+function applyPetSkin(skin) {
+  const key = `${skin.label}|${skin.image}`;
+  if (key === activeSkinKey) return;
+  activeSkinKey = key;
+
+  if (skin.rig && petRig && !failedSkins.has(key)) {
+    petRig.setSkin(skin).catch(() => {
+      failedSkins.add(key);
+      activeSkinKey = "";
+      petRig.clear();
+      imageWithFallback(refs.petImage, skin.image, "🎀");
+    });
+    return;
+  }
+
+  petRig?.clear();
+  imageWithFallback(refs.petImage, skin.image, "🎀");
+}
+
 function dialogueForPetState(petState) {
   if (petState === "interact") return "收到！又离目标近了一步。";
   if (petState === "mood") return "今天状态很好，继续加油！";
@@ -123,6 +157,7 @@ function dialogueForPetState(petState) {
 function setPetStateVisual(petState) {
   refs.petStage.dataset.petState = petState;
   refs.petStateText.textContent = dialogueForPetState(petState);
+  petRig?.setState(petState);
 }
 
 function playInteractionSound() {
@@ -351,8 +386,9 @@ function renderState() {
   refs.expText.textContent = `${expProgress.current}/${expProgress.needed}`;
   refs.expProgress.style.width = `${Math.round(expProgress.ratio * 100)}%`;
 
-  const skin = appConfig.petSkins[state.petSkin] || appConfig.petSkins.default;
-  imageWithFallback(refs.petImage, skin.image, "🎀");
+  const skins = appConfig.petSkins;
+  const skin = skins[state.petSkin] || skins[Object.keys(skins)[0]];
+  applyPetSkin(skin);
 
   renderSkinOptions();
   renderMilestones();
@@ -609,6 +645,9 @@ async function initialize() {
 
   const loaded = await storage.load();
   state = normalizeState(loaded, Object.keys(appConfig.petSkins)[0], appConfig.defaultMonthlyBudget);
+  if (!appConfig.petSkins[state.petSkin]) {
+    state = { ...state, petSkin: Object.keys(appConfig.petSkins)[0] };
+  }
   state = applyTimeDecay(state);
 
   fillCategoryHint();

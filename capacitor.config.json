@@ -1,0 +1,9 @@
+{
+  "appId": "com.crpeer.savingstablepet",
+  "appName": "储蓄陪伴",
+  "webDir": "www",
+  "backgroundColor": "#fef7ff",
+  "android": {
+    "allowMixedContent": false
+  }
+}

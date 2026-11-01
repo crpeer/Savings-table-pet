@@ -1,0 +1,19 @@
+{
+  "name": "savings-table-pet",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Savings companion app with a growing kanban character",
+  "scripts": {
+    "build:web": "node scripts/build-www.mjs",
+    "android:sync": "npx cap sync android",
+    "android:debug": "cd android && gradlew.bat assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.6.0",
+    "@capacitor/core": "8.6.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.6.0"
+  }
+}

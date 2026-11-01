@@ -93,11 +93,11 @@ const actionLabelAliases = {
 };
 
 const goalHomeStages = [
-  { key: "box", max: 20, label: "纸箱" },
-  { key: "nest", max: 40, label: "小窝" },
-  { key: "room", max: 60, label: "房间" },
-  { key: "suite", max: 80, label: "高级房间" },
-  { key: "dream", max: 100, label: "梦想之家" },
+  { key: "box", max: 20, label: "初识" },
+  { key: "nest", max: 40, label: "熟络" },
+  { key: "room", max: 60, label: "亲近" },
+  { key: "suite", max: 80, label: "信赖" },
+  { key: "dream", max: 100, label: "羁绊" },
 ];
 
 function imageWithFallback(img, src, placeholderText) {
@@ -113,16 +113,16 @@ function imageWithFallback(img, src, placeholderText) {
   img.src = src;
 }
 
-function labelForPetState(petState) {
-  if (petState === "walk") return "巡逻";
-  if (petState === "interact") return "互动";
-  if (petState === "mood") return "高兴";
-  return "待机";
+function dialogueForPetState(petState) {
+  if (petState === "interact") return "收到！又离目标近了一步。";
+  if (petState === "mood") return "今天状态很好，继续加油！";
+  if (petState === "walk") return "有点没精神……陪你待一会儿。";
+  return "今天也要一起存钱哦～";
 }
 
 function setPetStateVisual(petState) {
   refs.petStage.dataset.petState = petState;
-  refs.petStateText.textContent = `状态：${labelForPetState(petState)}`;
+  refs.petStateText.textContent = dialogueForPetState(petState);
 }
 
 function playInteractionSound() {
@@ -172,6 +172,9 @@ function renderActions() {
   appConfig.actions.forEach((action) => {
     const card = document.createElement("article");
     card.className = "action-card";
+    card.tabIndex = 0;
+    card.setAttribute("role", "button");
+    card.setAttribute("aria-label", `记录${action.label}`);
 
     const thumb = document.createElement("div");
     thumb.className = "action-thumb";
@@ -186,13 +189,13 @@ function renderActions() {
     title.textContent = action.label;
 
     const amount = document.createElement("span");
-    amount.className = "hint";
-    amount.textContent = `默认 +${currencyFormatter.format(action.defaultAmount)} · ${action.defaultCategory}`;
+    amount.className = "action-amount";
+    amount.textContent = `+${currencyFormatter.format(action.defaultAmount)}`;
 
-    const button = document.createElement("button");
-    button.type = "button";
-    button.textContent = `记录${action.label}`;
-    button.addEventListener("click", () => {
+    thumb.append(img);
+    card.append(thumb, title, amount);
+
+    const record = () => {
       saveRecord({
         actionKey: action.key,
         amount: action.defaultAmount,
@@ -200,10 +203,15 @@ function renderActions() {
         category: action.defaultCategory,
         tags: action.defaultTags || [],
       });
+    };
+    card.addEventListener("click", record);
+    card.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        record();
+      }
     });
 
-    thumb.append(img);
-    card.append(thumb, title, amount, button);
     refs.actionsContainer.appendChild(card);
 
     const option = document.createElement("option");
@@ -303,7 +311,7 @@ function renderGoal() {
   refs.goalRemainingText.textContent = summary.completed
     ? "🎉 已达成目标"
     : `剩余：${currencyFormatter.format(summary.remaining)}`;
-  refs.goalStageText.textContent = `宠物家园阶段：${stage.label}`;
+  refs.goalStageText.textContent = `陪伴阶段：${stage.label}`;
   refs.goalNameInput.value = state.goal.name;
   refs.goalAmountInput.value = String(state.goal.targetAmount);
   refs.petHomeStageBadge.textContent = stage.label;
@@ -332,9 +340,9 @@ function renderWindow() {
 
 function renderState() {
   refs.balanceText.textContent = currencyFormatter.format(state.balance);
-  refs.hungerText.textContent = String(state.pet.hunger);
-  refs.hydrationText.textContent = String(state.pet.hydration);
-  refs.moodText.textContent = String(state.pet.mood);
+  if (refs.hungerText) refs.hungerText.textContent = String(state.pet.hunger);
+  if (refs.hydrationText) refs.hydrationText.textContent = String(state.pet.hydration);
+  if (refs.moodText) refs.moodText.textContent = String(state.pet.mood);
   refs.levelText.textContent = String(state.pet.level);
   refs.affinityText.textContent = String(state.pet.affinity);
   refs.coinsText.textContent = String(state.pet.coins);
@@ -344,7 +352,7 @@ function renderState() {
   refs.expProgress.style.width = `${Math.round(expProgress.ratio * 100)}%`;
 
   const skin = appConfig.petSkins[state.petSkin] || appConfig.petSkins.default;
-  imageWithFallback(refs.petImage, skin.image, "角色皮套图片未设置");
+  imageWithFallback(refs.petImage, skin.image, "🎀");
 
   renderSkinOptions();
   renderMilestones();
@@ -432,6 +440,7 @@ function bindDrag() {
 
   refs.petWindowHeader.addEventListener("pointerdown", (event) => {
     if (event.target.tagName === "BUTTON") return;
+    if (event.pointerType !== "mouse") return;
     const rect = refs.petWindow.getBoundingClientRect();
     dragData = {
       startX: rect.left,
@@ -447,7 +456,22 @@ function bindDrag() {
   });
 }
 
+function bindTabNav() {
+  const tabs = document.querySelectorAll(".tab-btn");
+  const views = document.querySelectorAll(".view");
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      tabs.forEach((item) => item.classList.toggle("is-active", item === tab));
+      views.forEach((view) => {
+        view.classList.toggle("is-active", view.dataset.view === tab.dataset.tab);
+      });
+    });
+  });
+}
+
 function bindEvents() {
+  bindTabNav();
+
   refs.petSkinSelect.addEventListener("change", async (event) => {
     state = updatePetSkin(state, event.target.value);
     renderState();
